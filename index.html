@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ORAV — Benchmarking Audio-Video Generation from Multimodal Contexts</title>
+  <meta name="description" content="ORAV Bench evaluates omni-reference audio-video generation: 380 tasks, 1,322 unique image, video and audio references, 9 semantic roles and 30 role compositions, judged by a reference-aware pairwise protocol." />
+  <meta name="theme-color" content="#0a0b0d" />
+  <link rel="canonical" href="https://orav-bench.github.io/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://orav-bench.github.io/" />
+  <meta property="og:title" content="ORAV — Benchmarking Audio-Video Generation from Multimodal Contexts" />
+  <meta property="og:description" content="380 tasks · 1,322 unique references · 9 semantic roles · 30 role compositions." />
+  <meta property="og:image" content="https://orav-bench.github.io/assets/og-cover.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://orav-bench.github.io/assets/og-cover.jpg" />
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
+  <link rel="preload" href="assets/fonts/newsreader-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/inter-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="assets/fonts/fonts.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.className = "js";</script>
+</head>
+<body>
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="mark" viewBox="0 0 30 16">
+      <g fill="none" stroke-linecap="round" stroke-width="1.7">
+        <path d="M1.5 3h6.2c3.6 0 4.8 5 8.3 5" stroke="#2f9fc6" />
+        <path d="M1.5 8H16" stroke="#d4637d" />
+        <path d="M1.5 13h6.2c3.6 0 4.8-5 8.3-5" stroke="#c99a2e" />
+        <path d="M16 8h12.5" stroke="currentColor" />
+      </g>
+    </symbol>
+    <symbol id="i-paper" viewBox="0 0 16 16"><path d="M4 1.75h5.25L12.5 5v9.25H4zM9.25 1.75V5h3.25M6.25 8.25h4M6.25 10.75h4" /></symbol>
+    <symbol id="i-code" viewBox="0 0 16 16"><path d="M5.5 4.25 1.75 8l3.75 3.75M10.5 4.25 14.25 8l-3.75 3.75" /></symbol>
+    <symbol id="i-data" viewBox="0 0 16 16"><ellipse cx="8" cy="3.9" rx="5.1" ry="2" /><path d="M2.9 3.9v8.2c0 1.1 2.3 2 5.1 2s5.1-.9 5.1-2V3.9M2.9 8c0 1.1 2.3 2 5.1 2s5.1-.9 5.1-2" /></symbol>
+    <symbol id="i-film" viewBox="0 0 16 16"><rect x="1.75" y="2.75" width="12.5" height="10.5" rx="1.75" /><path d="M6.6 5.85v4.3L10.25 8z" /></symbol>
+    <symbol id="i-play" viewBox="0 0 16 16"><path d="M5 3.4v9.2L12.4 8z" fill="currentColor" stroke="none" /></symbol>
+    <symbol id="i-pause" viewBox="0 0 16 16"><path d="M4.75 3.25h2.1v9.5h-2.1zM9.15 3.25h2.1v9.5h-2.1z" fill="currentColor" stroke="none" /></symbol>
+    <symbol id="i-restart" viewBox="0 0 16 16"><path d="M3.1 8.6A5 5 0 1 0 4.6 4.4M3.6 1.9v2.85h2.85" /></symbol>
+    <symbol id="i-sound" viewBox="0 0 16 16"><path d="M2.25 6h2.4l3.1-2.6v9.2L4.65 10h-2.4zM10.4 5.7a3.2 3.2 0 0 1 0 4.6M12.3 3.9a5.8 5.8 0 0 1 0 8.2" /></symbol>
+    <symbol id="i-close" viewBox="0 0 16 16"><path d="M3.75 3.75l8.5 8.5M12.25 3.75l-8.5 8.5" /></symbol>
+    <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M5.25 10.75l5.5-5.5M6.25 5.25h4.5v4.5" /></symbol>
+    <symbol id="i-drag" viewBox="0 0 16 16"><path d="M1.75 8h12.5M4.5 5.25 1.75 8l2.75 2.75M11.5 5.25 14.25 8l-2.75 2.75" /></symbol>
+    <symbol id="i-wave" viewBox="0 0 16 16"><path d="M2 7v2M4.5 5v6M7 3v10M9.5 5.5v5M12 4v8M14.5 6.5v3" /></symbol>
+  </svg>
+
+  <header class="masthead" id="masthead">
+    <a class="mh-brand" href="#top" aria-label="ORAV, back to top">
+      <svg class="mark" aria-hidden="true"><use href="#mark" /></svg>
+      <span class="mh-name">ORAV</span>
+    </a>
+    <nav class="mh-nav" aria-label="Sections">
+      <a href="#overview">Overview</a>
+      <a href="#cases">Cases</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#evaluation">Evaluation</a>
+      <a href="#results">Results</a>
+      <a href="#findings">Findings</a>
+      <a href="#cite">Cite</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <!-- ================================================================== HERO -->
+    <section class="hero" aria-labelledby="heroTitle">
+      <div class="drum-stage" id="drumStage" aria-hidden="true">
+        <div class="drum" id="drum"></div>
+      </div>
+      <div class="hero-dof" aria-hidden="true"></div>
+      <div class="hero-veil" aria-hidden="true"></div>
+
+      <div class="hero-content">
+        <p class="kicker">Omni Reference Audio-Video Generation</p>
+        <h1 class="hero-title" id="heroTitle">ORAV</h1>
+        <p class="hero-sub">Benchmarking audio-video generation from multimodal contexts</p>
+
+        <p class="hero-brand"><img src="assets/logos/hy-color-dark.png" alt="Tencent Hy" width="627" height="120" /></p>
+
+        <nav class="toolstrip" aria-label="Resources">
+          <a href="https://arxiv.org/abs/2609.34843" target="_blank" rel="noopener" class="is-primary">
+            <svg class="i" aria-hidden="true"><use href="#i-paper" /></svg><span>Paper</span>
+          </a>
+          <a href="https://github.com/Tencent-Hunyuan/ORAV-Bench" target="_blank" rel="noopener">
+            <svg class="i" aria-hidden="true"><use href="#i-code" /></svg><span>Code</span>
+          </a>
+          <a href="https://huggingface.co/datasets/ORAV-Bench/ORAV-Bench" target="_blank" rel="noopener">
+            <svg class="i" aria-hidden="true"><use href="#i-data" /></svg><span>Benchmark</span>
+          </a>
+          <a href="https://huggingface.co/datasets/ORAV-Bench/ORAV-Bench-Artifacts" target="_blank" rel="noopener">
+            <svg class="i" aria-hidden="true"><use href="#i-film" /></svg><span>Artifacts</span>
+          </a>
+        </nav>
+      </div>
+
+      <div class="hero-dock">
+        <p class="dock-hint"><svg class="i" aria-hidden="true"><use href="#i-drag" /></svg><span>Drag to spin &middot; hover a frame for its prompt</span></p>
+        <button class="dock-btn" id="drumToggle" type="button" aria-pressed="false">
+          <svg class="i" aria-hidden="true"><use href="#i-pause" /></svg><span>Pause motion</span>
+        </button>
+      </div>
+      <div class="drum-card" id="drumCard" aria-hidden="true"></div>
+    </section>
+
+    <!-- ================================================================== OVERVIEW -->
+    <section class="sec" id="overview">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Overview</span></p>
+          <h2 class="sec-title">Resembling a reference is not the same as using it as instructed.</h2>
+        </header>
+
+        <div class="prose">
+          <p class="lede">
+            Audio-video generation from heterogeneous multimodal references requires both compositional control and a grounded understanding of context. Instructions specify how the references relate; the media supply the identities, dynamics, and sounds to be realized. ORAV asks whether a generator understands <em>what</em> each reference is meant to contribute, <em>how</em> visual, dynamic, and auditory factors compose into one event, and <em>which</em> incidental source content must be left behind.
+          </p>
+          <p>
+            To evaluate these open-ended outputs, a reference-aware pairwise protocol prepares visual and auditory evidence, compares the intended contribution of each reference, and checks every verdict in both presentation orders. On held-out instances it agrees with human judgments 85.46% of the time. Across five frontier systems, overall rankings conceal distinct strengths across reference compositions, and a recurring failure is to reproduce unintended source content in place of the requested result — while still closely resembling a reference.
+          </p>
+        </div>
+
+        <dl class="stats">
+          <div class="stat">
+            <dt class="stat-label">Task instances</dt>
+            <dd class="stat-num">380</dd>
+            <dd class="stat-note">2–10 references each</dd>
+          </div>
+          <div class="stat">
+            <dt class="stat-label">Unique references</dt>
+            <dd class="stat-num">1,322</dd>
+            <dd class="stat-note">None reused across tasks</dd>
+          </div>
+          <div class="stat">
+            <dt class="stat-label">Roles × compositions</dt>
+            <dd class="stat-num">9<span class="times">×</span>30</dd>
+            <dd class="stat-note">Image, video and audio</dd>
+          </div>
+          <div class="stat">
+            <dt class="stat-label">Agreement with humans</dt>
+            <dd class="stat-num">85.46<small>%</small></dd>
+            <dd class="stat-note">Human–human: 81.80%</dd>
+          </div>
+          <div class="stat">
+            <dt class="stat-label">Cross-backbone agreement</dt>
+            <dd class="stat-num">96.53<small>%</small></dd>
+            <dd class="stat-note">Same five-system ranking</dd>
+          </div>
+        </dl>
+
+        <figure class="fig">
+          <div class="fig-plate">
+            <img src="assets/figs/1_teaser.webp" width="2200" height="776" alt="Image, video and audio references selectively composed into one instructed audio-video event" class="zoomable" loading="lazy" />
+          </div>
+          <figcaption>
+            <span class="fig-no">Figure 1</span>Selective multimodal composition. From image, video, and audio references, a generator must take only the instructed properties — identity, choreography, vocal timbre — and bind them into one new audio-video event, leaving source scenery, performers, and recorded words behind.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================================================================== CASES -->
+    <section class="sec sec--dark" id="cases">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Cases</span></p>
+          <h2 class="sec-title">Six instructions, five generators, one shared clock.</h2>
+          <p class="sec-lede">
+            Each case pairs a real benchmark instruction with its image, video, and audio references. The five outputs play in sync, ordered by overall rank. Scrub, slow down, and choose whose soundtrack you hear.
+          </p>
+        </header>
+
+        <div class="case-index" id="caseIndex" role="tablist" aria-label="Cases"></div>
+
+        <div class="case-stage">
+          <div class="case-brief">
+            <div class="brief-head">
+              <span class="eyebrow" id="caseMeta"></span>
+              <div class="switch switch--dark" id="langSwitch" role="group" aria-label="Instruction language">
+                <button type="button" data-lang="en" aria-pressed="true">EN</button>
+                <button type="button" data-lang="zh" aria-pressed="false">中文</button>
+              </div>
+            </div>
+            <p class="brief-prompt" id="casePrompt"></p>
+            <p class="brief-note" id="caseNote"></p>
+          </div>
+          <div class="case-sources" id="caseSources"></div>
+        </div>
+
+        <div class="case-outputs" id="caseOutputs"></div>
+      </div>
+    </section>
+
+    <!-- ================================================================== BENCHMARK -->
+    <section class="sec" id="benchmark">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Benchmark</span></p>
+          <h2 class="sec-title">Nine roles across three modalities, composed into thirty signatures.</h2>
+          <p class="sec-lede">
+            Every instance pairs an English instruction with 2–10 references, each assigned a semantic role. Where prior benchmarks isolate appearance, dynamics, or audio, ORAV requires content, dynamics, and audio to be composed within a single event.
+          </p>
+        </header>
+
+        <div class="roles">
+          <section class="roles-col" style="--m: var(--img)">
+            <h3>Image <span>Content · 4 roles</span></h3>
+            <dl>
+              <dt>Subject</dt><dd>Carry identity, face, hair, and attire into new actions and settings.</dd>
+              <dt>Prop</dt><dd>Ground a specific object in hands, physics, and scene geometry.</dd>
+              <dt>Scene</dt><dd>Establish layout, lighting, and environment for instructed performers.</dd>
+              <dt>Style</dt><dd>Apply palette, texture, and rendering medium without copying source subjects.</dd>
+            </dl>
+          </section>
+          <section class="roles-col" style="--m: var(--vid)">
+            <h3>Video <span>Dynamics · 3 roles</span></h3>
+            <dl>
+              <dt>Motion</dt><dd>Transfer choreography, kinematics, and phasing to a new performer.</dd>
+              <dt>Camera</dt><dd>Replicate a demonstrated trajectory and pacing while excluding the source scenery.</dd>
+              <dt>VFX</dt><dd>Trigger the referenced effect at the instructed cue and place.</dd>
+            </dl>
+          </section>
+          <section class="roles-col" style="--m: var(--aud)">
+            <h3>Audio <span>Sound · 2 roles</span></h3>
+            <dl>
+              <dt>Speech</dt><dd>Speak newly instructed lines, lip-synced, in the reference voice — without replaying the recording.</dd>
+              <dt>Music</dt><dd>Compose a score that follows the reference’s style, instrumentation, and rhythm.</dd>
+            </dl>
+          </section>
+        </div>
+
+        <figure class="fig">
+          <div class="fig-plate">
+            <img src="assets/figs/2_overview.webp" width="2200" height="1149" alt="ORAV Bench overview: semantic roles, compositions and dataset statistics" class="zoomable" loading="lazy" />
+          </div>
+          <figcaption>
+            <span class="fig-no">Figure 2</span>Benchmark overview: 380 curated tasks and 1,322 unique references spanning nine semantic roles and thirty composition signatures; no asset is shared between tasks.
+          </figcaption>
+        </figure>
+
+        <figure class="tbl">
+          <figcaption class="tbl-caption">
+            <span class="fig-no">Table 1</span>Comparison with related video and audio-video generation benchmarks. Joint composition is the largest set of factor families required together, from distinct references, in a single instance.
+          </figcaption>
+          <div class="tbl-scroll">
+            <table class="booktabs" id="benchmarkTable">
+              <thead>
+                <tr class="th-group">
+                  <th rowspan="2" scope="col">Benchmark</th>
+                  <th colspan="2" scope="colgroup" class="c">Generation</th>
+                  <th colspan="3" scope="colgroup" class="c">Reference-derived factors</th>
+                  <th rowspan="2" scope="col" class="c">Joint composition</th>
+                </tr>
+                <tr>
+                  <th scope="col" class="c">Output</th>
+                  <th scope="col" class="c">References</th>
+                  <th scope="col" class="c">Content</th>
+                  <th scope="col" class="c">Dynamics</th>
+                  <th scope="col" class="c">Audio</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="tbl-notes">I / V / A: image, video, audio references; V / AV: video or audio-video output. C: content and appearance; D: motion, camera movement, visual effects; A: audio attributes; C alone denotes within-family composition. <span class="dot-yes" aria-hidden="true"></span> included; † extended track; ‡ T2V / R2V only.</p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ================================================================== EVALUATION -->
+    <section class="sec sec--tint" id="evaluation">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Evaluation</span></p>
+          <h2 class="sec-title">A judge that looks, listens, and checks itself.</h2>
+          <p class="sec-lede">
+            Similarity scores and generic prompts cannot rank open-ended multi-reference generations. ORAV separates listening from looking, compares every reference in the context of the whole instruction, and keeps a verdict only when it survives a swap of presentation order.
+          </p>
+        </header>
+
+        <ol class="steps">
+          <li class="step">
+            <span class="step-no">01</span>
+            <h3>Look and listen, separately</h3>
+            <p>Candidate and reference clips become timestamped 8&nbsp;fps panels with audio-energy timelines. A visually blind Listener (Gemini-3.1-Pro) transcribes speech, flags reused recordings, and describes the soundtrack.</p>
+          </li>
+          <li class="step">
+            <span class="step-no">02</span>
+            <h3>Compare each reference in context</h3>
+            <p>The pairwise Judge (GPT-6-Astra) checks what each reference was meant to contribute, and whether unrequested scenery, performers, or recordings leaked in, before forming one joint preference.</p>
+          </li>
+          <li class="step">
+            <span class="step-no">03</span>
+            <h3>Decide in order, then swap</h3>
+            <p>Verdicts follow usability, then task fulfillment, then general quality. Every pair is judged in both presentation orders; matching decisions are kept, and order conflicts count as a tie in the ranking.</p>
+          </li>
+        </ol>
+
+        <figure class="fig">
+          <div class="fig-plate">
+            <img src="assets/figs/3_visualization.webp" width="2200" height="845" alt="Reference-aware pairwise evaluation pipeline" class="zoomable" loading="lazy" />
+          </div>
+          <figcaption>
+            <span class="fig-no">Figure 3</span>Reference-aware pairwise evaluation. Visual panels, blind auditory evidence, and per-reference comparisons feed an AB/BA consistency check before Davidson–Bradley–Terry ranking.
+          </figcaption>
+        </figure>
+
+        <div class="validation">
+          <figure class="chart panel">
+            <div class="chart-head">
+              <h3>Agreement with held-out human judgments</h3>
+              <div class="switch" id="valSwitch" role="group" aria-label="Agreement metric">
+                <button type="button" data-metric="nonTie" aria-pressed="true">Non-tie</button>
+                <button type="button" data-metric="strict" aria-pressed="false">Strict</button>
+              </div>
+            </div>
+            <div class="forest" id="valChart"></div>
+            <figcaption id="valCaption"></figcaption>
+          </figure>
+
+          <aside class="replication panel">
+            <p class="eyebrow">Cross-backbone replication</p>
+            <p class="big-num">96.53<small>%</small></p>
+            <p class="replication-text">pairwise agreement when all 380 tasks are re-judged by an independent evaluator pair, Gemini&nbsp;4 Argon with GPT-6.1-Sol. The five-system ranking is unchanged, and eight of nine role leaders are preserved.</p>
+            <table class="booktabs booktabs--compact" id="altTable">
+              <thead><tr><th scope="col">System</th><th scope="col" class="r">Primary</th><th scope="col" class="r">Replication</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== RESULTS -->
+    <section class="sec" id="results">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Results</span></p>
+          <h2 class="sec-title">Rankings, taken apart.</h2>
+          <p class="sec-lede">
+            Davidson–Bradley–Terry rankings over 350 shared-delivery instances, broken down by reference role, by opponent, by composition, and against fifteen pointwise diagnostics.
+          </p>
+        </header>
+
+        <div class="tabs" id="resultTabs" role="tablist" aria-label="Result views">
+          <button type="button" role="tab" class="tab" data-pane="paneRoles" aria-selected="true">By role</button>
+          <button type="button" role="tab" class="tab" data-pane="paneMatrix" aria-selected="false">Head-to-head</button>
+          <button type="button" role="tab" class="tab" data-pane="paneComps" aria-selected="false">By composition</button>
+          <button type="button" role="tab" class="tab" data-pane="paneDiag" aria-selected="false">Diagnostics</button>
+        </div>
+
+        <div class="pane is-on" id="paneRoles" role="tabpanel">
+          <div class="chips" id="roleChips" role="group" aria-label="Reference role"></div>
+          <p class="pane-desc" id="roleDesc"></p>
+          <div class="forest forest--board" id="roleBoard"></div>
+          <p class="pane-foot">Expected win rate against the field, %, with 95% instance-clustered bootstrap intervals.</p>
+        </div>
+
+        <div class="pane" id="paneMatrix" role="tabpanel" hidden>
+          <div class="tbl-scroll"><table class="heat" id="matrixTable"></table></div>
+          <p class="pane-foot">Observed win rate of the row system against the column system, %, with ties counted as half; small figures give wins–losses–ties over 350 shared-delivery instances.</p>
+        </div>
+
+        <div class="pane" id="paneComps" role="tabpanel" hidden>
+          <div class="tbl-scroll"><table class="heat heat--comps" id="compTable"></table></div>
+          <p class="pane-foot">Expected win rate within each of 14 composition signatures, %. The leader of each row is set in bold; marked rows show the reversal described under Findings.</p>
+        </div>
+
+        <div class="pane" id="paneDiag" role="tabpanel" hidden>
+          <div class="tbl-scroll">
+            <table class="booktabs booktabs--num" id="diagTable">
+              <thead>
+                <tr class="th-group">
+                  <th rowspan="2" scope="col">System</th>
+                  <th colspan="3" scope="colgroup" class="c">Visual quality ↑</th>
+                  <th colspan="2" scope="colgroup" class="c">Ref. affinity ↑</th>
+                  <th scope="colgroup" class="c">Audio ↑</th>
+                  <th colspan="3" scope="colgroup" class="c">Speech</th>
+                  <th scope="colgroup" class="c">ORAV ↑</th>
+                </tr>
+                <tr>
+                  <th scope="col" class="r"><abbr title="VBench-style composite quality">Comp. z</abbr></th>
+                  <th scope="col" class="r"><abbr title="Raw DOVER++ technical score × 100">TQ</abbr></th>
+                  <th scope="col" class="r"><abbr title="Aesthetic Predictor V2.5">AP</abbr></th>
+                  <th scope="col" class="r"><abbr title="Full-frame DINO similarity × 100">Subject</abbr></th>
+                  <th scope="col" class="r"><abbr title="Full-frame CLIP similarity × 100">Scene</abbr></th>
+                  <th scope="col" class="r"><abbr title="Audiobox production quality">PQ</abbr></th>
+                  <th scope="col" class="r"><abbr title="ECAPA cosine similarity">Voice</abbr> ↑</th>
+                  <th scope="col" class="r"><abbr title="Character error rate, %">CER</abbr> ↓</th>
+                  <th scope="col" class="r"><abbr title="Word error rate, %">WER</abbr> ↓</th>
+                  <th scope="col" class="r">Win rate</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="pane-foot">Best value per column in bold. Means weight instances measurable for all five systems equally; insertions can push CER and WER above 100%. * Kling-v3-Omni’s tested interface has no audio-reference channel, so it receives audio through a retained-soundtrack adapter — hence its near-unit voice similarity alongside a 7.53% speech win rate. Refitting on the four native audio-video systems preserves the overall ranking and MiniMax-H3’s speech lead (66.87% vs. 58.08%).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== FINDINGS -->
+    <section class="sec sec--tint" id="findings">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Findings</span></p>
+          <h2 class="sec-title">What the references reveal.</h2>
+        </header>
+
+        <article class="finding panel">
+          <div class="finding-text">
+            <p class="eyebrow">Finding 1 · Composition</p>
+            <h3>Overall rankings hide context-dependent reversals.</h3>
+            <p>MiniMax-H3 ranks third overall (54.0%) yet leads speech (73.6%) and four of five speech compositions. Adding a motion reference flips the order: MiniMax-H3 leads Seedance-2.5 by 19.5 points in <span class="combo">subject + speech</span> and trails it by 19.8 points in <span class="combo">subject + motion + speech</span>.</p>
+            <p>Removing only the motion reference from those same instances, with subject, voice, and scene held fixed, moves the pair from 73.4% vs. 53.6% to 80.2% vs. 87.8%, reproducing the reversal under matched inputs.</p>
+          </div>
+          <figure class="finding-chart">
+            <div id="slopeChart" class="svg-chart"></div>
+            <figcaption>Expected win rate, %, in two composition signatures (<i>n</i> = 9 each).</figcaption>
+          </figure>
+        </article>
+
+        <article class="finding panel">
+          <div class="finding-text">
+            <p class="eyebrow">Finding 2 · Usability</p>
+            <h3>Reference substitution drives 95% of unusable outputs.</h3>
+            <p>Failing generators rarely collapse into noise. They copy unintended source scenery, performers, or recordings in place of the instructed event, and video references amplify the habit: Wan3.0-Video’s usability-veto rate rises from 12.0% without a video reference to 55.9% with one, and it replays the reference speech in 9 of 78 speech instances.</p>
+          </div>
+          <figure class="finding-chart">
+            <div id="vetoChart" class="svg-chart"></div>
+            <figcaption>Usability-veto rate, %, without and with a video reference.</figcaption>
+          </figure>
+        </article>
+
+        <div class="fig-pair">
+          <figure class="fig">
+            <div class="fig-plate">
+              <img src="assets/figs/9_case_motion.webp" width="1320" height="1583" alt="Case study: fine-grained dunk motion transfer" class="zoomable" loading="lazy" />
+            </div>
+            <figcaption><span class="fig-no">Figure 9</span>Fine-grained motion. In <span class="combo">subject-motion-7f681a</span> the judge separates the demonstrated forward leg extension and lowered ball from a conventional overhead dunk, citing timestamps from the recorded evaluation.</figcaption>
+          </figure>
+          <figure class="fig">
+            <div class="fig-plate">
+              <img src="assets/figs/10_case_binding.webp" width="1320" height="1583" alt="Case study: reference substitution in a ballroom foxtrot" class="zoomable" loading="lazy" />
+            </div>
+            <figcaption><span class="fig-no">Figure 10</span>Selective transfer versus substitution. In <span class="combo">subject-motion-be4824</span>, keeping the competition hall and source dancers triggers a usability veto even though the motion resembles the reference.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================== CITE -->
+    <section class="sec" id="cite">
+      <div class="wrap">
+        <header class="sec-head">
+          <p class="sec-kicker"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>Cite</span></p>
+          <h2 class="sec-title">Use ORAV, and cite it.</h2>
+          <p class="sec-lede">The evaluation pipeline, dataset manifests, generated artifacts, and fifteen pointwise diagnostic families are released under Apache-2.0.</p>
+        </header>
+
+        <div class="code-grid">
+          <article class="code paper" aria-label="Paper">
+            <div class="code-head"><span>Paper</span><a class="copy" href="https://arxiv.org/abs/2609.34843" target="_blank" rel="noopener">arXiv:2609.34843</a></div>
+            <div class="paper-body">
+              <p class="paper-title">ORAV: Benchmarking Audio-Video Generation from Multimodal Contexts</p>
+              <p class="paper-authors">
+                <span>Jiacheng Hua<sup>1,2</sup></span>
+                <span>Xiaokun Feng<sup>2</sup></span>
+                <span>Jiaqi Hua<sup>1</sup></span>
+                <span>Chang Liu<sup>1</sup></span>
+                <span>Yilin Wang<sup>1</sup></span>
+                <span>Biao Wang<sup>2,†</sup></span>
+                <span>Miao Liu<sup>1,‡</sup></span>
+              </p>
+              <p class="paper-affil">
+                <span><sup>1</sup>College of AI, Tsinghua University</span>
+                <span><sup>2</sup>Tencent Hy</span>
+                <span class="paper-roles"><sup>†</sup>Project lead&ensp;<sup>‡</sup>Corresponding author</span>
+              </p>
+            </div>
+          </article>
+          <div class="code">
+            <div class="code-head"><span>BibTeX</span><button type="button" class="copy" data-copy="bibtex">Copy</button></div>
+            <pre id="bibtex">@article{hua2026orav,
+  title   = {ORAV: Benchmarking Audio-Video Generation from Multimodal Contexts},
+  author  = {Hua, Jiacheng and Feng, Xiaokun and Hua, Jiaqi and Liu, Chang and
+             Wang, Yilin and Wang, Biao and Liu, Miao},
+  journal = {arXiv preprint arXiv:2609.34843},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2609.34843}
+}</pre>
+          </div>
+          <div class="code">
+            <div class="code-head"><span>Quick start</span><button type="button" class="copy" data-copy="quickstart">Copy</button></div>
+            <pre id="quickstart">git clone https://github.com/Tencent-Hunyuan/ORAV-Bench.git
+cd ORAV-Bench &amp;&amp; pip install -e .
+
+<span class="c"># timestamped visual panels and media proxies</span>
+orav prepare runs/example/manifest.json \
+  --config examples/evaluation.json --output runs/example
+
+<span class="c"># blind Listener + reference-aware AB/BA Judge</span>
+orav evaluate runs/example/manifest.json \
+  --config examples/evaluation.json --output runs/example --workers 8
+
+<span class="c"># Davidson–Bradley–Terry ranking, 95% bootstrap CIs</span>
+orav rank runs/example/comparisons.json \
+  --output runs/example/ranking.json</pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-inner">
+      <p class="foot-brand"><svg class="mark" aria-hidden="true"><use href="#mark" /></svg><span>ORAV · Tencent Hy</span></p>
+      <nav class="foot-links" aria-label="Footer">
+        <a href="https://arxiv.org/abs/2609.34843" target="_blank" rel="noopener">arXiv</a>
+        <a href="https://github.com/Tencent-Hunyuan/ORAV-Bench" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://huggingface.co/datasets/ORAV-Bench/ORAV-Bench" target="_blank" rel="noopener">Dataset</a>
+        <a href="https://huggingface.co/datasets/ORAV-Bench/ORAV-Bench-Artifacts" target="_blank" rel="noopener">Artifacts</a>
+        <a href="mailto:hjc21@mails.tsinghua.edu.cn">Contact</a>
+      </nav>
+    </div>
+  </footer>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Figure preview" hidden>
+    <button type="button" class="lightbox-close" id="lightboxClose" aria-label="Close preview"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button>
+    <img id="lightboxImg" alt="" />
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
